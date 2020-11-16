@@ -1,0 +1,260 @@
+﻿<process name="Sending Email" version="1.0" bpversion="6.9.0.26970" narrative="Sendng email with attachments" byrefcollection="true" type="object" runmode="Exclusive" preferredid="74e33999-5a3d-4c1c-9949-731383a106d6">
+  <appdef>
+    <element name="Application Root">
+      <id>afcf57d5-6acd-44e7-921d-b87df617f385</id>
+      <type>Application</type>
+      <basetype>Application</basetype>
+      <datatype>unknown</datatype>
+      <diagnose>False</diagnose>
+    </element>
+  </appdef>
+  <view>
+    <camerax>0</camerax>
+    <cameray>-35</cameray>
+    <zoom version="2">1.25</zoom>
+  </view>
+  <preconditions />
+  <endpoint narrative="" />
+  <stage stageid="abd61aab-97c3-4f72-b695-6046ab241ea6" name="Sending Email" type="SubSheetInfo">
+    <display x="-210" y="-150" w="150" h="90" />
+  </stage>
+  <stage stageid="0e976239-5458-4e8e-9bc7-2b192d1136d8" name="Start" type="Start">
+    <loginhibit />
+    <display x="60" y="-180" />
+    <onsuccess>8f944604-8719-460c-9616-8f181054ddd9</onsuccess>
+  </stage>
+  <stage stageid="f95d6fe8-879a-4acc-b643-bab7a5b87566" name="End" type="End">
+    <loginhibit />
+    <display x="0" y="180" />
+  </stage>
+  <stage stageid="8f944604-8719-460c-9616-8f181054ddd9" name="MS Excel VBO::Create Instance" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="60" y="-135" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" narrative="Flag to indicate that events should be enabled / disabled on the attached instance - defaulted to True" expr="True" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="An integer which can be used to identify the created instance in subsequent actions" stage="handle" />
+    </outputs>
+    <onsuccess>15ed3b90-32ac-4c0e-a73c-8ed282cd496c</onsuccess>
+    <resource object="MS Excel VBO" action="Create Instance" />
+  </stage>
+  <stage stageid="15ed3b90-32ac-4c0e-a73c-8ed282cd496c" name="MS Excel VBO::Open Workbook" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="60" y="-90" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the required workbook should be opened. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="File name" friendlyname="File name" narrative="The path and name of the file which should be opened." expr="&quot;C:\Users\Administrator\Desktop\email.xlsx&quot;" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name used by Excel to identify the workbook - usually this is the file name (without the path)." stage="Workbook Name" />
+    </outputs>
+    <onsuccess>65ed60fc-3b76-4006-b422-d4613fcaa6bb</onsuccess>
+    <resource object="MS Excel VBO" action="Open Workbook" />
+  </stage>
+  <stage stageid="65ed60fc-3b76-4006-b422-d4613fcaa6bb" name="MS Excel VBO::Get Worksheet As Collection" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="60" y="-45" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the worksheet which should be retrieved resides. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which contains the sheet required. The default empty text indicates the currently active workbook on the specified instance." expr="[Workbook Name]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet within the specified workbook which should be written to a collection. The default empty text indicates the currently active worksheet within the specified workbook." expr="&quot;Sheet1&quot;" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" narrative="The collection containing the data from the specified worksheet - the column IDs will be gleaned from the first row on the sheet being retrieved." stage="Coll1" />
+    </outputs>
+    <onsuccess>5f63c311-573d-47c7-ac4d-483bf6313712</onsuccess>
+    <resource object="MS Excel VBO" action="Get Worksheet As Collection" />
+  </stage>
+  <stage stageid="a5a0be75-a2a3-4974-bab1-255e992e8345" name="handle" type="Data">
+    <display x="210" y="-135" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="073b654c-c3ae-4c2e-8f77-24ebe6a35197" name="Workbook Name" type="Data">
+    <display x="225" y="-90" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="1c599d2a-2d05-4aa2-97f9-8101731eb601" name="Email - POP3/SMTP::Configure" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="60" y="15" />
+    <inputs>
+      <input type="text" name="Username" friendlyname="Username" narrative="The POP3 and SMTP Username" expr="[email]" />
+      <input type="password" name="Password" friendlyname="Password" narrative="The POP3 and SMTP Password" expr="[password]" />
+      <input type="text" name="POP3 Server" friendlyname="POP3 Server" narrative="The POP3 Server address e.g. pop.domain.com" expr="&quot;pop.gmail.com&quot;" />
+      <input type="text" name="SMTP Server" friendlyname="SMTP Server" narrative="The SMTP Server address e.g. smtp.domain.com" expr="&quot;smtp.gmail.com&quot;" />
+      <input type="number" name="POP3 Port" friendlyname="POP3 Port" narrative="The POP3 Port, e.g. 110 or 995" expr="995" />
+      <input type="number" name="SMTP Port" friendlyname="SMTP Port" narrative="The SMTP Port, e.g 25 or 465" expr="587" />
+      <input type="flag" name="POP3 UseSSL" friendlyname="POP3 UseSSL" narrative="Whether to use SSL for POP3" expr="True" />
+      <input type="flag" name="SMTP UseSSL" friendlyname="SMTP UseSSL" narrative="Whether to use SSL for SMTP" expr="True" />
+    </inputs>
+    <onsuccess>eb7303ed-e4d6-4305-8a62-4d9e0a81935b</onsuccess>
+    <resource object="Email - POP3/SMTP" action="Configure" />
+  </stage>
+  <stage stageid="d4dd0e67-ead7-4f03-9fdd-69233fb3911e" name="email" type="Data">
+    <loginhibit />
+    <display x="495" y="-165" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">venkey.nita@gmail.com</initialvalue>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="76101ade-d0f1-49d5-adc5-2a8ff016d506" name="password" type="Data">
+    <loginhibit />
+    <display x="495" y="-105" />
+    <datatype>password</datatype>
+    <initialvalueenc>5,28,2,73,12,5,64,86,1,24,17,30</initialvalueenc>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="c70353b8-327d-4a7c-a655-22cffc5b0485" name="Email - POP3/SMTP::Send Message" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="180" y="135" />
+    <inputs>
+      <input type="text" name="From" friendlyname="From" narrative="The email address of the sender." expr="[email]" />
+      <input type="text" name="To" friendlyname="To" narrative="The email address of the recipient. To address multiple recipients use the format &quot;john.smith@example.com, henry.jones@example.com&quot; OR &quot;John Smith &lt;john.smith@example.com&gt;, Henry Jones &lt;henry.jones@example.com&gt;&quot;." expr="[Coll1.ToEmail]" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="The subject of the email." expr="&quot;BRIDGELABZ SAMPLE MESSAGE&quot;" />
+      <input type="text" name="Body" friendlyname="Body" narrative="The body of the email." expr="[outEmailBody]" />
+      <input type="collection" name="Attachments" friendlyname="Attachments" narrative="A Collection containing a list of files to add to the email as attachments." expr="[Attachments path]" />
+      <input type="flag" name="BodyIsHTML" friendlyname="BodyIsHTML" narrative="Indicates if the body should be sent as HTML" expr="True" />
+    </inputs>
+    <onsuccess>4edd17eb-a9fb-4803-a1a8-fbfb4cb9d18b</onsuccess>
+    <resource object="Email - POP3/SMTP" action="Send Message" />
+  </stage>
+  <stage stageid="eb7303ed-e4d6-4305-8a62-4d9e0a81935b" name="Loop Start1" type="LoopStart">
+    <loginhibit />
+    <display x="180" y="15" />
+    <onsuccess>bdce18c3-0143-454a-8636-8b8c60664987</onsuccess>
+    <groupid>67683349-9d85-4b66-b31a-ebddad9bc849</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>Coll1</loopdata>
+  </stage>
+  <stage stageid="4edd17eb-a9fb-4803-a1a8-fbfb4cb9d18b" name="Loop End1" type="LoopEnd">
+    <loginhibit />
+    <display x="180" y="180" />
+    <onsuccess>f95d6fe8-879a-4acc-b643-bab7a5b87566</onsuccess>
+    <groupid>67683349-9d85-4b66-b31a-ebddad9bc849</groupid>
+  </stage>
+  <stage stageid="979b1d7a-62f5-419f-b55d-8a93410c7a44" name="Attachments path" type="Collection">
+    <loginhibit />
+    <display x="315" y="60" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Path" type="text" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="Path" type="text" value="" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="bdce18c3-0143-454a-8636-8b8c60664987" name="Getting Attachments" type="Calculation">
+    <loginhibit />
+    <display x="180" y="75" />
+    <onsuccess>c70353b8-327d-4a7c-a655-22cffc5b0485</onsuccess>
+    <calculation expression="[Coll1.Attachment]" stage="Attachments path.Path" />
+  </stage>
+  <stage stageid="16847629-643b-495e-a1d8-5d8c1f973dde" name="Coll1" type="Collection">
+    <loginhibit />
+    <display x="315" y="-75" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="ToEmail" type="text" />
+      <field name="Attachment" type="text" />
+    </collectioninfo>
+  </stage>
+  <stage stageid="1ffb4e56-c4c9-473e-a874-d335a600d225" name="inputData" type="Collection">
+    <loginhibit />
+    <display x="480" y="45" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="ID" type="number" />
+      <field name="Name" type="text" />
+      <field name="Age" type="number" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="ID" type="number" value="1" />
+        <field name="Name" type="text" value="Test" />
+        <field name="Age" type="number" value="24" />
+      </row>
+      <row>
+        <field name="ID" type="number" value="2" />
+        <field name="Name" type="text" value="Best" />
+        <field name="Age" type="number" value="32" />
+      </row>
+      <row>
+        <field name="ID" type="number" value="3" />
+        <field name="Name" type="text" value="Rest" />
+        <field name="Age" type="number" value="27" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="5f63c311-573d-47c7-ac4d-483bf6313712" name="GenertebHtmlBody" type="Code">
+    <loginhibit />
+    <display x="-45" y="-45" />
+    <inputs>
+      <input type="collection" name="inputData" expr="[inputData]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="outEmailBody" stage="outEmailBody" />
+    </outputs>
+    <onsuccess>efd2d6a4-ccbd-48da-8e27-43fc7b7bc894</onsuccess>
+    <code><![CDATA[StringBuilder sb=new StringBuilder();
+if(inputData.Rows.Count>0)
+{
+  sb.Append("Hi viewer, <br><br>");
+  sb.Append("Please find the below mentioned employee details. <br><br>");
+  sb.Append("<table style='border:1px solid black; border-collapse: collapse;'>");
+  sb.Append("<tr style='border:1px solid black; border-collapse: collapse;'>"); 
+  foreach(DataColumn dc in inputData.Columns)
+  {
+	  sb.Append("<th style='border:1px solid black; border-collapse: collapse;'>");
+	  sb.Append(dc.ColumnName);
+	  sb.Append("</th>");
+  }
+  sb.Append("</tr>");
+  
+  foreach(DataRow dr in inputData.Rows)
+  {
+	  sb.Append("<tr style='border:1px solid black; border-collapse: collapse;'>");
+	  foreach(DataColumn dc in inputData.Columns)
+	  {
+		  sb.Append("<td style='border:1px solid black; border-collapse: collapse;'>");
+		  sb.Append(dr[dc.ColumnName].ToString());
+		  sb.Append("</td>");
+	  }
+	  sb.Append("</tr>");
+  }
+  
+  sb.Append("</table><br><br>");
+  sb.Append("Regards,<br>Team QueryBot");
+}
+
+outEmailBody=sb.ToString();
+]]></code>
+  </stage>
+  <stage stageid="886d07ea-947b-491a-8288-81205f42461b" name="outEmailBody" type="Data">
+    <display x="480" y="-45" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="efd2d6a4-ccbd-48da-8e27-43fc7b7bc894" name="Anchor1" type="Anchor">
+    <loginhibit />
+    <display x="-45" y="15" w="10" h="10" />
+    <onsuccess>1c599d2a-2d05-4aa2-97f9-8101731eb601</onsuccess>
+  </stage>
+</process>
